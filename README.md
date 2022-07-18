@@ -59,7 +59,7 @@ This file contains some metadata of your application, like the version, the name
 
 This is the actual directory used by helm to understand every resource that needs to be created. This is the directory we'll be placing our CRD yml files. 
 
-For every file listed below there's a git connection which is defined as a Watcher. This is actually another pod which will be run specifically on the namespace (branch) you are working and will keep watching the git repository until the pipeline is done. Every time a new commit is tracked by a Watcher, it'll create a pod for each step with commit hash as identification and will execute all the steps related to the commit, sequentially or not.
+For every file listed below there's a git connection which is defined as a Watcher. This is actually another pod which will be run specifically on the namespace (branch) you are working and will keep watching the git repository until the pipeline is done. Every time a new commit is tracked by a Watcher, it'll create a pod for each step with commit hash as identification and will execute all the steps related to the commit, sequentially or not. 
 
 In every inkubus CRD file you can define what branches will run each pipeline step, so we can filter 
 
@@ -231,17 +231,8 @@ So how all of this magic is going to happen?
 
 
 
-
-## why focus only on running tests?
-
-It's faster to only focus, first, on running a specific step from the software ecosystem, but I'm also thinking about the future and what new things I can add. This can be a whole gitops ci/cd platform running natively on Kubernetes and focusing on pulling resouces from git repositories, instead of pushing resources from a ci/cd platform. But I need hands...
-
-Improvements or features:
-- integrate helm charts with inkubus so we can have different CRDs which will be run, like for example: 
-  - a CRD for tests, with a test.yml definition file which will watch git repo for new commits and run tests inside a named docker image, based on the selected branches
-  - a CRD for building, with a build.yml definition file which will watch git repo for new commits and build the application with a named Dockerfile [inside a docker image](https://tutorials.releaseworksacademy.com/learn/the-simple-way-to-run-docker-in-docker-for-ci), based on the selected branches
-  - a CRD for deploying, with a deploy.yml definition file which will watch a specific image inside the Kubernetes storage and deploy it everytime a new image tag is created, based on the name of the branch + commit hash
-  - a CRD for each possible integration, with a integration/ directory and <integration_name>.yml definition files, which will integrate the status of every run to external applications, like:
+## Improvements
+- a CRD for each possible integration, with a integration/ directory and <integration_name>.yml definition files, which will integrate the status of every run to external applications, like:
     - github
     - gitlab
     - bitbucket
@@ -250,11 +241,3 @@ Improvements or features:
     - jira
     - slack
     - whatever else, let's develop my people
-  - the basic chart definition files from other resources will also be present on the git repo, and we can expand inkubus to watch them also, like:
-    - maintain a .chart/ directory with this structure:
-      - app/ = contains definition of the workload which will be run on kubernetes
-      - test/ = contains definition of testing and static code analysis
-      - sec/ = contains definition of vulnerability and other security scans
-      - deploy/ = contains definition of the build process and deployment specifications
-      - integration/ = contains definition of all configured integrations so you can receive the run status on those softwares
-  - when helm installing the chart on kubernetes, manually, the operator will do the rest of the job
